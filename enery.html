@@ -1,0 +1,127 @@
+
+
+    <!DOCTYPE html>
+    <style>
+    
+    .states :hover {
+      fill: green;
+    }
+    .q0 { fill:rgb(247,251,255); }
+    .q1 { fill:rgb(198,219,239); }
+    .q2 { fill:rgb(107,174,214); }
+    .q3 { fill:rgb(33,113,181); }
+    .q4 { fill:rgb(8,48,107); }
+    
+    
+    .state-borders {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 0.5px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+    
+    </style>
+    <svg width="960" height="600"></svg>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <link rel="stylesheet" href="energy_css.css" />
+
+    <div class=“tooltip”>
+            <span class=“tooltiptext”></span>
+            <div>
+                <h1>Analyis of Per Capita GDP Spent on Energy</h1>
+                <!-- table data in it-->            
+                </div>
+        </div>
+    
+    <script>
+    
+    var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+    
+
+    var svg = d3.select("svg");
+    
+    var path = d3.geoPath();
+    var tooltip = d3.select("body").append("div") 
+        .attr("class", "tooltip")       
+        .style("opacity", 0);
+
+    var quantile = d3.scaleQuantile()
+        .range(d3.range(5).map(function(i) { return "q" + i}))
+
+
+    console.log(quantile(9.4))
+
+    d3.json("https://d3js.org/us-10m.v1.json", function(error, us) {
+      if (error) throw error;
+      d3.csv("2016_expenditure_new.csv",function(error2,edata){
+
+        console.log(edata)
+        
+        // add to  quantile the domain, finding the min, max (extent) of "energy expenditure_gdp_percent"
+        edata.forEach(function(data) {
+            console.log(data)
+            data.energyexpenditure_gdp_percent = +data.energyexpenditure_gdp_percent;
+        })
+
+        quantile.domain(d3.extent(edata, data => data.energyexpenditure_gdp_percent))
+
+        svg.append("g")
+            .attr("class", "states")
+            .selectAll("path")
+            .data(topojson.feature(us, us.objects.states).features)
+            .enter().append("path")
+            .attr("d", path)
+            .attr("class",function(d){
+                // console.log(d)
+                var selection = edata.filter(function(item) {
+                    if (+item.fip === +d.id) {
+                        return item
+                    }
+                })
+                selection[0].energyexpenditure_gdp_percent                
+                // return "states " + quantile(d.energyexpenditure_gdp_percent)
+                return quantile(selection[0].energyexpenditure_gdp_percent)
+            })
+            .on("mouseover", function(d) {
+                var sel = d3.select(this);
+                    // sel.moveToFront();
+                d3.select(this).transition().duration(300).style("opacity", 0.8);
+                div.transition().duration(300)
+                .style("opacity", 1)
+                var selection = edata.filter(function(item) {
+                    if (+item.fip === +d.id) {
+                        return item
+                    }
+                })
+                var GDP_perc = selection[0].energyexpenditure_gdp_percent
+                var state = selection[0].state
+                
+                div.text(`${state} : ${GDP_perc}%`)
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY -30) + "px");
+                })
+            .on("mouseout", function() {
+                var sel = d3.select(this);
+                    // sel.moveToBack();
+                d3.select(this)
+                .transition().duration(300)
+                .style("opacity", 1);
+                div.transition().duration(300)
+                .style("opacity", 0);
+                });
+        
+            
+        svg.append("path")
+            .attr("class", "state-borders")
+            .attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })));
+
+      })
+    });
+    
+    </script>
