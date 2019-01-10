@@ -1,6 +1,7 @@
 # Project-2-Energy Consumption in the United States
 
 Project 2 - Monday/Wednesday Class
+
 Do you do business in a state that has deregulated electricity or natural gas? If you do, you have an opportunity to choose an energy strategy that supports your business. When businesses can choose their energy pricing plan, they  can negotiate the inherent volatility of the wholesale market into opportunities for cost control, efficiencies, and other business goals. But to take full advantage of your energy opportunities, you should look beyond a simple comparison of rates and prices.
 
 At first glance, shopping for competitive pricing offers from energy suppliers may seem overwhelming. Not every supplier provides the same information or even explains how they derived their pricing quote, making it hard for you to quickly identify the best offer for your business.
