@@ -1,0 +1,16 @@
+DROP DATABASE IF EXISTS ENERGY_EXPENDITURE_db;
+CREATE DATABASE ENERGY_EXPENDITURE_db;
+USE ENERGY_EXPENDITURE_db;
+
+CREATE TABLE ENERGY(
+  id INTEGER(11) AUTO_INCREMENT NOT NULL,
+  State VARCHAR (30),
+  btu VARCHAR (30),
+  expenditure_per_state VARCHAR(100),
+  expenditure_per_person_dollars VARCHAR(100),
+  energyexpenditure_gdp_percent VARCHAR (100),
+  PRIMARY KEY (id)
+);
+
+SELECT * FROM ENERGY;
+
